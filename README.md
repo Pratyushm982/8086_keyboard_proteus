@@ -102,7 +102,7 @@ To save pins on the 8255 (allowing us to use Ports A & B entirely for the keypad
 
 ## 3. Design Logic: Addressing & Banking
 <details>
-<summary><strong>Click to expand technical details</strong></summary>
+<summary><strong>View technical details</strong></summary>
 
 ### Why Addresses `40, 42, 44` instead of `40, 41, 42`?
 A critical design choice was skipping odd addresses to handle the **8086 Memory Banking**.
@@ -126,7 +126,7 @@ To support this in hardware, the address lines are shifted: `CPU A1` connects to
 
 ## 4. Device Configuration
 <details>
-<summary><strong>Click to expand configuration values</strong></summary>
+<summary><strong>View configuration values of PPI and PIC</strong></summary>
 
 ### 4.1 8255 Control Word: `92h`
 **Value:** `1001 0010` (Binary)
@@ -146,7 +146,7 @@ We use **Mode 0** (Basic I/O). The input ports are read directly by the CPU to d
 
 ## 5. Software Architecture
 <details>
-<summary><strong>Click to expand software design</strong></summary>
+<summary><strong>View software design and logic</strong></summary>
 
 To ensure the system is responsive, we separated the logic into two distinct "Loops" or processes that communicate via a buffer.
 
@@ -169,7 +169,7 @@ The `MAIN_LOOP` runs continuously in the background.
 
 ## 6. Operation Flow
 <details>
-<summary><strong>Click to view step-by-step flow</strong></summary>
+<summary><strong>View step-by-step flow</strong></summary>
 
 1.  **Standby:** All Row and Column lines are pulled High (Logic 1) by resistors. CPU loops in `MAIN_LOOP`.
 2.  **Action:** User presses 'A'. The SW-DPST switch connects the signal lines to Ground.
@@ -184,7 +184,7 @@ The `MAIN_LOOP` runs continuously in the background.
 
 ## 7. Source Code
 <details>
-<summary><strong>Click to view full Assembly Code</strong></summary>
+<summary><strong>View full Assembly Code</strong></summary>
 
 ```assembly
 ; ==============================================
@@ -793,3 +793,4 @@ DUMMY_NMI ENDP
 
 CODE ENDS
 END START
+
