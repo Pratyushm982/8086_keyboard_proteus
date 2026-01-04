@@ -17,8 +17,6 @@
 
 ---
 
-
-
 ## 1. Project Overview
 This system implements a fully functional character entry terminal using an **8086 Microprocessor**. It interfaces a custom **7x6 Matrix Keypad** and a **16x2 LCD Display** to allow users to type, edit, and view text.
 
@@ -47,8 +45,6 @@ See the system in action:
 
 ---
 
-
-
 ## 2. Hardware Architecture
 
 **For a complete visual reference of the wiring and schematic, please refer to:**
@@ -63,17 +59,17 @@ See the system in action:
 **Keyboard Matrix Schematic:**
 ![Keyboard Matrix Schematic](Circuit_Snapshots/Keyboard_matrix.png)
 
-## 
 ### 2.1 8255 PPI (Parallel I/O Interface)
+![8255 Pinout](Circuit_Snapshots/8255_pinout.png)
+
 The 8255 acts as the primary "bridge," expanding the 8086's data bus into 24 distinct I/O pins.
 * **Base Address:** `0040h`
 * **Port A (Input):** Reads the **7 Row Lines**. The ISR reads this port and looks for the bit that has dropped to **0** (Grounded).
 * **Port B (Input):** Reads the **6 Column Lines**. The ISR reads this port and looks for the bit that has dropped to **0** (Grounded).
 * **Port C (Output):** Connected to the **LCD**. Since the LCD is a passive device, the CPU must drive data *out* to it.
 
-## 
 ### 2.2 8259 PIC (Interrupt Controller)
-[Image of 8259 PIC block diagram]
+![8259 Pinout](Circuit_Snapshots/8259_pinout.png)
 
 The 8259 manages hardware signals.
 * **Base Address:** `0020h` (Command), `0022h` (Data).
@@ -83,10 +79,7 @@ The 8259 manages hardware signals.
 * **INT (Output):** Connects to the 8086 `INTR` pin.
 * **INTA (Input):** Connects to the 8086 `INTA` pin to acknowledge the request.
 
-## 
 ### 2.3 7x6 Matrix Keypad (SW-DPST-MOM)
-[Image of matrix keypad internal circuit]
-
 This project uses **SW-DPST-MOM** (Double Pole Single Throw - Momentary) switches to simplify detection logic.
 
 * **Switch Mechanics:**
@@ -98,9 +91,8 @@ This project uses **SW-DPST-MOM** (Double Pole Single Throw - Momentary) switche
     * **Standby:** All inputs are 1. Output is 0.
     * **Key Press:** One input drops to 0. The NOR Gate detects this change and outputs a **Logic 1** to trigger the 8259.
 
-## 
 ### 2.4 16x2 LCD Display
-[Image of 16x2 LCD pinout]
+![LCD Pinout](Circuit_Snapshots/LCD_pinout.png)
 
 To save pins on the 8255 (allowing us to use Ports A & B entirely for the keypad), we drive the LCD in **4-Bit Mode**.
 * **Data (D4-D7):** Connected to Port C (PC0-PC3). We send 8-bit characters in two 4-bit chunks ("nibbles").
@@ -108,9 +100,9 @@ To save pins on the 8255 (allowing us to use Ports A & B entirely for the keypad
 
 ---
 
-
-
 ## 3. Design Logic: Addressing & Banking
+<details>
+<summary><strong>Click to expand technical details</strong></summary>
 
 ### Why Addresses `40, 42, 44` instead of `40, 41, 42`?
 A critical design choice was skipping odd addresses to handle the **8086 Memory Banking**.
@@ -128,11 +120,13 @@ Our peripherals (8255/8259) are **8-bit devices** wired physically to the **Lowe
 **Address Folding:**
 To support this in hardware, the address lines are shifted: `CPU A1` connects to `Chip A0`, and `CPU A2` connects to `Chip A1`.
 
+</details>
+
 ---
 
-
-
 ## 4. Device Configuration
+<details>
+<summary><strong>Click to expand configuration values</strong></summary>
 
 ### 4.1 8255 Control Word: `92h`
 **Value:** `1001 0010` (Binary)
@@ -141,17 +135,18 @@ We use **Mode 0** (Basic I/O). The input ports are read directly by the CPU to d
 * **Port B (Input):** Listening to Columns.
 * **Port C (Output):** Driving the LCD.
 
-## 
 ### 4.2 8259 PIC Configuration
 * **Triggering (ICW1 = `13h`):** Configured for **Edge Triggering**. This ensures a single keypress generates only one interrupt.
 * **Vector Mapping (ICW2 = `08h`):** We map our keypad interrupt to **INT 08h**. This ensures it doesn't conflict with Intel's reserved internal interrupts (0-4).
 * **Masking (OCW1 = `FEh`):** We set the mask to `1111 1110`. This enables **only IRQ0** (Keypad) and disables all other noise sources.
 
+</details>
+
 ---
 
-
-
 ## 5. Software Architecture
+<details>
+<summary><strong>Click to expand software design</strong></summary>
 
 To ensure the system is responsive, we separated the logic into two distinct "Loops" or processes that communicate via a buffer.
 
@@ -161,7 +156,6 @@ The `KEY_ISR` is designed to be extremely fast. It executes only when a key is p
 2.  **Translate:** It calculates the key index and looks up the ASCII character in the `KEYMAP` table.
 3.  **Buffer:** Instead of trying to draw to the screen (which is slow), it simply pushes the character into a **Circular Queue** and returns control to the main program.
 
-## 
 ### 5.2 The Slow Loop: Main Application
 The `MAIN_LOOP` runs continuously in the background.
 1.  **Monitor:** It constantly checks if the Circular Queue has new data (`Head != Tail`).
@@ -169,11 +163,13 @@ The `MAIN_LOOP` runs continuously in the background.
 3.  **Execute:** It checks if the character is special (e.g., `08h` for Backspace). If it's a normal character, it calls the **LCD Driver** to update the display.
     * *This separation ensures that if the LCD takes 2ms to update, the user can still type fast without losing keystrokes.*
 
+</details>
+
 ---
 
-
-
 ## 6. Operation Flow
+<details>
+<summary><strong>Click to view step-by-step flow</strong></summary>
 
 1.  **Standby:** All Row and Column lines are pulled High (Logic 1) by resistors. CPU loops in `MAIN_LOOP`.
 2.  **Action:** User presses 'A'. The SW-DPST switch connects the signal lines to Ground.
@@ -182,11 +178,13 @@ The `MAIN_LOOP` runs continuously in the background.
 5.  **Capture:** CPU pauses, jumps to `KEY_ISR`, reads Port A (detects Row 0 is Low) and Port B (detects Col 0 is Low), pushes 'A' to the Queue.
 6.  **Display:** Main loop wakes up, pops 'A', and sends it to the LCD via Port C.
 
+</details>
+
 ---
 
-
-
 ## 7. Source Code
+<details>
+<summary><strong>Click to view full Assembly Code</strong></summary>
 
 ```assembly
 ; ==============================================
@@ -794,8 +792,4 @@ DUMMY_NMI PROC NEAR
 DUMMY_NMI ENDP
 
 CODE ENDS
-
 END START
-
-
-
