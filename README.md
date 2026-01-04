@@ -17,6 +17,8 @@
 
 ---
 
+
+
 ## 1. Project Overview
 This system implements a fully functional character entry terminal using an **8086 Microprocessor**. It interfaces a custom **7x6 Matrix Keypad** and a **16x2 LCD Display** to allow users to type, edit, and view text.
 
@@ -44,6 +46,8 @@ See the system in action:
 *(Replace `video_filename.mp4` with your actual video file name)*
 
 ---
+
+
 
 ## 2. Hardware Architecture
 
@@ -104,6 +108,8 @@ To save pins on the 8255 (allowing us to use Ports A & B entirely for the keypad
 
 ---
 
+
+
 ## 3. Design Logic: Addressing & Banking
 
 ### Why Addresses `40, 42, 44` instead of `40, 41, 42`?
@@ -124,6 +130,8 @@ To support this in hardware, the address lines are shifted: `CPU A1` connects to
 
 ---
 
+
+
 ## 4. Device Configuration
 
 ### 4.1 8255 Control Word: `92h`
@@ -140,6 +148,8 @@ We use **Mode 0** (Basic I/O). The input ports are read directly by the CPU to d
 * **Masking (OCW1 = `FEh`):** We set the mask to `1111 1110`. This enables **only IRQ0** (Keypad) and disables all other noise sources.
 
 ---
+
+
 
 ## 5. Software Architecture
 
@@ -161,6 +171,8 @@ The `MAIN_LOOP` runs continuously in the background.
 
 ---
 
+
+
 ## 6. Operation Flow
 
 1.  **Standby:** All Row and Column lines are pulled High (Logic 1) by resistors. CPU loops in `MAIN_LOOP`.
@@ -171,6 +183,8 @@ The `MAIN_LOOP` runs continuously in the background.
 6.  **Display:** Main loop wakes up, pops 'A', and sends it to the LCD via Port C.
 
 ---
+
+
 
 ## 7. Source Code
 
@@ -782,5 +796,6 @@ DUMMY_NMI ENDP
 CODE ENDS
 
 END START
+
 
 
