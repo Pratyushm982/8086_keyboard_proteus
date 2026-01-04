@@ -59,6 +59,7 @@ See the system in action:
 **Keyboard Matrix Schematic:**
 ![Keyboard Matrix Schematic](Circuit_Snapshots/Keyboard_matrix.png)
 
+## 
 ### 2.1 8255 PPI (Parallel I/O Interface)
 The 8255 acts as the primary "bridge," expanding the 8086's data bus into 24 distinct I/O pins.
 * **Base Address:** `0040h`
@@ -776,3 +777,4 @@ DUMMY_NMI ENDP
 CODE ENDS
 
 END START
+
