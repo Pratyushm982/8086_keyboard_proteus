@@ -67,6 +67,7 @@ The 8255 acts as the primary "bridge," expanding the 8086's data bus into 24 dis
 * **Port B (Input):** Reads the **6 Column Lines**. The ISR reads this port and looks for the bit that has dropped to **0** (Grounded).
 * **Port C (Output):** Connected to the **LCD**. Since the LCD is a passive device, the CPU must drive data *out* to it.
 
+## 
 ### 2.2 8259 PIC (Interrupt Controller)
 [Image of 8259 PIC block diagram]
 
@@ -78,6 +79,7 @@ The 8259 manages hardware signals.
 * **INT (Output):** Connects to the 8086 `INTR` pin.
 * **INTA (Input):** Connects to the 8086 `INTA` pin to acknowledge the request.
 
+## 
 ### 2.3 7x6 Matrix Keypad (SW-DPST-MOM)
 [Image of matrix keypad internal circuit]
 
@@ -92,6 +94,7 @@ This project uses **SW-DPST-MOM** (Double Pole Single Throw - Momentary) switche
     * **Standby:** All inputs are 1. Output is 0.
     * **Key Press:** One input drops to 0. The NOR Gate detects this change and outputs a **Logic 1** to trigger the 8259.
 
+## 
 ### 2.4 16x2 LCD Display
 [Image of 16x2 LCD pinout]
 
@@ -130,6 +133,7 @@ We use **Mode 0** (Basic I/O). The input ports are read directly by the CPU to d
 * **Port B (Input):** Listening to Columns.
 * **Port C (Output):** Driving the LCD.
 
+## 
 ### 4.2 8259 PIC Configuration
 * **Triggering (ICW1 = `13h`):** Configured for **Edge Triggering**. This ensures a single keypress generates only one interrupt.
 * **Vector Mapping (ICW2 = `08h`):** We map our keypad interrupt to **INT 08h**. This ensures it doesn't conflict with Intel's reserved internal interrupts (0-4).
@@ -147,6 +151,7 @@ The `KEY_ISR` is designed to be extremely fast. It executes only when a key is p
 2.  **Translate:** It calculates the key index and looks up the ASCII character in the `KEYMAP` table.
 3.  **Buffer:** Instead of trying to draw to the screen (which is slow), it simply pushes the character into a **Circular Queue** and returns control to the main program.
 
+## 
 ### 5.2 The Slow Loop: Main Application
 The `MAIN_LOOP` runs continuously in the background.
 1.  **Monitor:** It constantly checks if the Circular Queue has new data (`Head != Tail`).
@@ -777,4 +782,5 @@ DUMMY_NMI ENDP
 CODE ENDS
 
 END START
+
 
