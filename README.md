@@ -40,8 +40,7 @@ Unlike simple polling systems which waste CPU cycles constantly checking pins, t
 
 ## 1.2 Showcase
 See the system in action:
-[**Click here to watch the demonstration video**](./video_filename.mp4)
-*(Replace `video_filename.mp4` with your actual video file name)*
+[**Click here to watch the demonstration video**](./8086_Keyboard_showcase_video.mp4)
 
 ---
 
@@ -793,4 +792,5 @@ DUMMY_NMI ENDP
 
 CODE ENDS
 END START
+
 
