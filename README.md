@@ -47,8 +47,7 @@ https://github.com/user-attachments/assets/46ad2f9d-bc95-40c9-97b6-6aec3be7b4cf
 
 ## 2. Hardware Architecture
 
-**For a complete visual reference of the wiring and schematic, please refer to:**
-![Full Schematic](Circuit_Snapshots/Full_Circuit.png)
+**For a complete visual reference of the wiring and schematic, please refer to the following:**
 
 **8086, Address latches and decoder schematic:**
 ![8086, Address latches and decoder schematic](Circuit_Snapshots/8086_and_address_latch.png)
@@ -793,6 +792,7 @@ DUMMY_NMI ENDP
 
 CODE ENDS
 END START
+
 
 
 
