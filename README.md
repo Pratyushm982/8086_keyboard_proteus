@@ -47,7 +47,17 @@ See the system in action:
 
 ## 2. Hardware Architecture
 
-**For a complete visual reference of the wiring and schematic, please refer to:** `8086_Keyboard_Img.png`
+**For a complete visual reference of the wiring and schematic, please refer to:**
+![Full Schematic](Circuit_Snapshots/Full_Circuit.png)
+
+**8086, Address latches and decoder schematic:**
+![8086, Address latches and decoder schematic](Circuit_Snapshots/8086_and_address_latch.png)
+
+**PPI, PIC and LCD Schematic:**
+![PPI, PIC and LCD Schematic](Circuit_Snapshots/Peripherals.png)
+
+**Keyboard Matrix Schematic:**
+![Keyboard Matrix Schematic](Circuit_Snapshots/Keyboard_matrix.png)
 
 ### 2.1 8255 PPI (Parallel I/O Interface)
 The 8255 acts as the primary "bridge," expanding the 8086's data bus into 24 distinct I/O pins.
@@ -764,4 +774,5 @@ DUMMY_NMI PROC NEAR
 DUMMY_NMI ENDP
 
 CODE ENDS
+
 END START
